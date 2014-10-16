@@ -1,0 +1,70 @@
+.websitify-text-component
+    script(src="http://cdn.ckeditor.com/4.4.5/full/ckeditor.js")
+    script(src="http://cdn.ckeditor.com/4.4.5/full/adapters/jquery.js")
+    script.
+        CKEDITOR.disableAutoInline = true;
+    .websitify-text-component-content(ref="main",contentEditable=this.props.page.edit?true:false,dangerouslySetInnerHTML={__html:this.props.data.html})
+main.
+
+    exports.componentDidMount = function(){
+        this.componentDidUpdate();
+    }
+
+    exports.componentDidUpdate = function(){
+        if(this.props.page.edit){
+            this.startEdit();
+        }else{
+            this.stopEdit();
+        }
+    }
+
+    exports.startEdit = function(){
+        var self = this;
+        if(!this.editor){
+            this.editor = CKEDITOR.inline(this.refs.main.getDOMNode(),{
+                enterMode: CKEDITOR.ENTER_BR,
+                toolbar: [
+                    { name: 'basicstyles', groups: [ 'basicstyles' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat' ] },
+                    { name: 'paragraph', groups: [ 'list', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+                    { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+                    { name: 'styles', items: [ 'Styles' ] }
+                ],
+                stylesSet: [
+                    {
+                        name:"Titel 1",
+                        element:"h1"
+                    },
+                    {
+                        name:"Titel 2",
+                        element:"h2"
+                    },
+                    {
+                        name:"Titel 3",
+                        element:"h3"
+                    },
+                    {
+                        name:"Titel 4",
+                        element:"h4"
+                    }
+                ]
+            });
+
+            this.editor.on("change",function(){
+                self.props.data.html = self.refs.main.getDOMNode().innerHTML;
+            })
+        }
+    }
+
+    exports.stopEdit = function(){
+        if(this.editor){
+            this.editor.destroy();
+            delete this.editor;
+        }
+    }
+
+    exports.save = function(cb){
+        cb({
+            type:"Text",
+            html:this.props.data.html
+        });
+    }

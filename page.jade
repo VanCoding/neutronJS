@@ -1,0 +1,27 @@
+doctype html
+html
+    head
+        block head
+    body
+        if this.props.page.canEdit
+            button.btn.btn-primary.websitify-edit(onClick=this.edit)
+                span.glyphicon.glyphicon-pencil
+                - console.log("rendering....")
+                = this.props.page.edit?" Save":" Edit"
+
+        block body
+        script(src=this.props.path+"main.js")
+        script= "React.renderComponent("+this.props.component+"("+JSON.stringify(this.props)+"),document);"
+main.
+    exports.edit = function(){
+        var self = this;
+        if(this.props.page.edit){
+            this.props.page.edit = false;
+            this.save(function(data){
+                self.forceUpdate();
+            });
+        }else{
+            this.props.page.edit = true;
+            this.forceUpdate();
+        }
+    }

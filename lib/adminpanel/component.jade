@@ -1,0 +1,19 @@
+div
+    .modal-backdrop.fade.in
+    .modal.fade.in(style="display:block")
+        .modal-dialog.modal-lg
+            .modal-content
+                .modal-header(style="position:relative")
+                    button.close
+                        span ×
+                    h3 Admin Panel
+                    ul.nav.nav-tabs.pull-right(style="position:absolute;right:40px;bottom:-1px;")
+                        li.active
+                            a(href="#") Blog
+                        li
+                            a(href="#") Images
+
+                .modal-body
+                    Blog(data=this.props.data)
+main.
+    var Blog = require("./blog.jade");

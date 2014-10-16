@@ -1,0 +1,25 @@
+.modal(style="display:block").fade.in
+    if !this.props.hide
+        .modal-backdrop.fade.in
+    .modal(style="display:block")
+        .modal-dialog.modal-lg
+            .modal-content
+                children
+
+main.
+    var stack = [];
+    exports.componentDidMount = function(){
+        if(stack.length){
+            var oldtop = stack[stack.length-1];
+            oldtop.props.hide = true;
+            oldtop.forceUpdate();
+        }
+        stack.push(this);
+    }
+    exports.componentDidUnmount = function(){
+        var newtop = stack.pop();
+        if(newtop){
+            delete newtop.props.hide;
+            newtop.forceUpdate();
+        }
+    }

@@ -1,0 +1,15 @@
+- var Component = this.getClass();
+Component(data=this.props.data,ref="component",page=this.props.page.props.page)
+
+main.
+    var components = {
+        Text:require("./text.jade")
+    };
+
+    exports.getClass = function(){
+        return components[this.props.data.type]
+    }
+
+    exports.save = function(cb){
+        this.refs.component.save(cb);
+    }

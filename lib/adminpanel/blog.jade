@@ -1,0 +1,47 @@
+.blogadmin
+    if this.props.data.post
+        label Title
+        input.form-control(type="text")
+        br
+        label Date
+        input.form-control(type="date")
+        br
+        label Text
+        textarea.form-control
+        br
+        .btn-toolbar.pull-right
+            button.btn.btn-primary(onClick=this.save)
+                span.glyphicon.glyphicon-save
+                |  Save
+    else
+        table.table.table-striped.table-hover
+            thead
+                tr
+                    th Title
+                    th Date
+                    th Actions
+            tbody
+                each post in this.props.data.posts
+                    tr
+                        td= post.title
+                        td
+                        td
+                            button.btn.btn-default
+                                span.glyphicon.glyphicon-trash
+        .btn-toolbar.pull-right
+            button.btn.btn-primary(onClick=this.create)
+                span.glyphicon.glyphicon-file
+                |  Create
+    .clearfix
+main.
+    exports.create = function(){
+        this.props.data.post = {
+            title:"",
+            data:""
+        };
+        this.forceUpdate();
+    }
+    exports.save = function(){
+        delete this.props.data.post;
+        this.forceUpdate();
+    }

@@ -1,0 +1,125 @@
+/* WEBSITIFY */
+
+.websitify-edit{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:9999;
+}
+
+/* FILE MANGER */
+.filemanager .item{
+    box-sizing:border-box;
+    display:inline-block;
+    width:120px;
+    height:80px;
+    margin-right:10px;
+    vertical-align:middle;
+    margin-bottom:10px;
+    position:relative;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-color:white;
+    text-align:center;
+    border-radius:5px;
+    border:1px solid #eee;
+    opacity:0.6;
+}
+.filemanager .item:hover{
+    opacity:1;
+}
+.filemanager .item.selected{
+    border:1px solid #e72510;
+    opacity:1;
+}
+.filemanager .item > div{
+    padding-left:5px;
+    padding-right:5px;
+    text-overflow:ellipsis;
+    position:absolute;
+    bottom:10px;
+    left:0;
+    right:0;
+    line-height:20px;
+    background-color:rgba(0, 0, 0, 0.5);
+    white-space:nowrap;
+    color:white;
+    overflow:hidden;
+    text-align:left;
+}
+.filemanager .item > span{
+    line-height:80px;
+    font-size:60px;
+    color:#e72510;
+}
+
+.filemanager .item .progressbar{
+    bottom:50px;
+    height:10px;
+    left:10px;
+    right:10px;
+    box-sizing:border-box;
+    border:2px solid white;
+    border-radius:5px;
+    overflow:hidden;
+    padding:0px;
+}
+.filemanager .item > .progressbar > div{
+    height:100%;
+    background-color:white;
+}
+ /* AREA */
+ .area-space{
+     height:1px;
+     text-align:center;
+ }
+ .area-space a{
+     margin-top:-12px;
+ }
+ #editsave{
+     position:fixed;
+     top:20px;
+     right:20px;
+     z-index:10000;
+ }
+ .block{
+     position:relative;
+     padding:1px;
+     min-height:20px;
+ }
+ .block-btn{
+     position:absolute;
+     top:-20px;
+     display:none;
+     z-index:1000;
+ }
+ .block:hover, .block.edit{
+     border:1px red dotted;
+     padding:0px;
+ }
+ .block:hover > .block-btn{
+     display:block;
+ }
+ .block-btn.block-up{
+     left:30px;
+ }
+ .block-btn.block-add-up{
+     left:60px;
+ }
+ .block-btn.block-down{
+     left:30px;
+     top:inherit;
+     bottom:-20px;
+ }
+ .block-btn.block-add-down{
+     left:60px;
+     top:inherit;
+     bottom:-20px;
+ }
+ .block-btn.block-edit{
+     left:90px;
+ }
+ .block-btn.block-delete{
+     left:120px;
+ }
