@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "An react.js-based CMS for node.js",
   "main": "lib/index.js",
+  "browser":{
+      "lib/index.js":"lib/client.js"
+  },
   "dependencies": {
     "browserify": "~5.12.1",
     "gridfs-stream": "~0.5.1",

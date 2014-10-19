@@ -1,17 +1,18 @@
 doctype html
+-console.log(this.props);
 html
     head
         block head
     body
         if this.props.page.canEdit
+            link(href=this.props.path+"public/style.css",rel="stylesheet",type="text/css")
             button.btn.btn-primary.websitify-edit(onClick=this.edit)
                 span.glyphicon.glyphicon-pencil
-                - console.log("rendering....")
                 = this.props.page.edit?" Save":" Edit"
 
         block body
-        script(src=this.props.path+"main.js")
-        script= "React.renderComponent("+this.props.component+"("+JSON.stringify(this.props)+"),document);"
+        script(src=this.props.path+"public/main.js")
+        script= "React.renderComponent(base("+JSON.stringify(this.props)+"),document);"
 main.
     exports.edit = function(){
         var self = this;
