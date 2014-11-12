@@ -4,5 +4,5 @@ html
         block head
     body
         block body
-        script(src="/public/main.js")
+        script(src=this.props.neutronPath+"public/main.js")
         script= "require('main')(location.pathname,"+JSON.stringify(this.props.data)+");"

@@ -1,18 +1,17 @@
-div
-    .modal-backdrop.fade.in
-    .modal.fade.in(style="display:block")
-        .modal-dialog.modal-lg
-            .modal-content
-                .modal-header(style="position:relative")
-                    button.close
-                        span ×
-                    h3 Admin Panel
-                    ul.nav.nav-tabs.pull-right(style="position:absolute;right:40px;bottom:-1px;")
-                        li.active
-                            a(href="#") Blog
-                        li
-                            a(href="#") Images
-                .modal-body
-                    Blog(data=this.props.data)
+extends ../../page.jade
+
+append head
+    link(rel="stylesheet" href="/public/css/bootstrap.css")
+
+append body
+    .container
+        h3 Admin Panel
+        ul.nav.nav-tabs.pull-right(style="position:relative;top:-50px;")
+            each module,id in this.props.modules
+                li(className=(id == this.state.activeModule?"active":""))
+                    a(href="#")= id
+        = this.props.modules[this.state.activeModule]()
 main.
-    var Blog = require("./blog.jade");
+    exports.getInitialState = function(){
+        return {activeModule:Object.keys(this.props.modules)[0]}
+    }
