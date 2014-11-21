@@ -1,8 +1,13 @@
 doctype html
 html
     head
+        link(rel="stylesheet" type="text/css" href=this.props.page.neutronPath+"public/style.css")
         block head
     body
+        if this.props.page.data.mayEdit
+            button.btn.btn-primary.pull-right.websitify-edit
+                i.glyphicon.glyphicon-pencil
+                = " "+(this.props.page.data.edit?"Save":"Edit")
         block body
-        script(src=this.props.neutronPath+"public/main.js")
-        script= "require('main')(location.pathname,"+JSON.stringify(this.props.data)+");"
+        script(src=this.props.page.neutronPath+"public/main.js")
+        script= "require('main')(location.pathname,"+JSON.stringify(this.props.page.data)+");"
