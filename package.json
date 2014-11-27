@@ -7,6 +7,7 @@
     "lib/index.js": "lib/client.js"
   },
   "dependencies": {
+    "body-parser": "^1.9.3",
     "browserify": "~5.12.1",
     "express": "~4.9.7",
     "gridfs-stream": "~0.5.1",
