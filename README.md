@@ -20,34 +20,7 @@ getting started
 ---------------
 first of all, neutronJS is just an express middleware! So, you can embed it easily into any existing website and also just use it for very specific parts of your website.
 
-To create the neutronJS middleware, you first need to install neutronJS using `npm install neutronjs`. Then you are ready to create the middleware using the following code:
-
-```
-//load neutronJS
-var neutron = require('neutronjs');
-
-//create the website middleware
-var website = new neutron.Website({url:'/'});
-
-/* register the views. Specify the absolute paths of all your full-page components here
-   (those that also render the html, head and body tag)
-   You can also write your views in Jade. Those views will automatically get converted
-   to normal react components */
-
-website.registerViews({
-    "Home":require.resolve('/path/to/normal/react/component.js'),
-    "About":require.resolve('/path/to/jade/component.jade')
-});
-
-// define the routes of the website. You can only use views you've registered before.
-website.addRoute("/","Home");
-website.addRoute("/about","About");
-
-//now add the website middleware to your express app
-app.use(website);
-```
-
-The above is the most basic setup of a page. In future there will be a lot more features, for example to register components for inline editing or to extend & customize the admin interface.
+To create the neutronJS middleware, you first need to install neutronJS using `npm install neutronjs`. Then you can require it using `var neutron = require("neutron.js");`. Then you can create a website using `var website = new neutron.Website({/*options*/});`, add your widgets using `website.registerWidget()`, add your routes using `website.addRoutes()` and then mount your website in an express app using `app.use(website);`
 
 examples
 --------
@@ -56,26 +29,57 @@ for now, the only page that is based on this CMS is the [new all in one concert 
 API reference
 -------------
 
-### Website
+### Website (class)
+The website class is the main class of neutronJS. It is usually only instanciated once. You can register widgets & pages on it and define routes. A website instance is also a mountable express route, so you can `app.use()` it.
 - **new Website (opts)**
     - opts: An object containing configuration parameters for the website
         - url: A string containing the base path of the website eg. '/'
     - return value: An express middleware function, with the additional methods below.
-- **registerViews (views)**
-    - views: An object containing key value pairs of view entries.
-        - key: Defines the name of the view (must be unique to the entire website)
-        - value: A string that represents the absolute path to the react component
-          (we recomment using require.resolve to get the absolute path)
-- **addRoute (path,view)**
+- **registerWidget (widget)**
+    - widget: The widget object to register (see Widget)
+- **addRoute (path, page)**
     - path: Either a string or regular expression that specifies the path of this route.
       See express routes for more details.
-    - view: A string with the name of the view. You must have registered a view with
-      this name using `registerViews` before.
+    - page: The page object to use for this route (see Page)
+- **loadWidgets (widgets, cb)** A helper function for use in Widget.load/Page.load.
+    - widgets: An array of widget-data objects to call the widgets `load`-function on.
+    - cb: The callback function to call when it's done.
+- **saveWidgets (widgets, cb)** A helper function for use in Widget.save/Page.save.
+    - widgets: An array of widget-data objects to call the widgets `save`-function on.
+    - cb: The callback function to call when it's done.
 
+###Widget (data structure)
+A widget represents a part of a page. It holds information or functions about reading & saving data and rendering this part of the page. A widget can be any object that implements the following properties & functions:
 
+- **id** A unique identifier (string) for this widget.
 
+- **componentPath** The absolute path (string) to the react-component, that renders the visual part of this widget. It is recommended to use `require.resolve()` to get the path. See also `Widget & Page Components`
 
+- **load (website,data,cb)** -optional-
+In this function, you can load data for your widget that cannot be stored inline and write it to the `data` object. Call `cb` if you are done. If your widget contains sub-widgets, make sure that you call the `load`-functions for those widgets, too! See also the helper function for this: `Website.loadWidgets()`.
+    - website: The website of the widget
+    - data: The data object to put the data of you widget into.
+    - cb: The callback function to call when you're done
 
+- **save (website, data, cb)** -optional-
+In this function, you can save the data of your widget that should not get stored inline & remove the corresponding properties of the data object. Basically, you do the reverse of what you do in the `save`-function. If your widget contains sub-widgets, make sure that you call the `save`-function for those widgets, too! See also the helpfer function for this: `Website.saveWidgets`
+    - website: The website of the widget
+    - data: The data object to save & clear
+    - cb: The callback function to call when you're done
+
+###Page (data structure)
+A page represents a root-template of your website. It holds information or functions about reading & saving data and rendering this page. A page is & works basically the same as a widget, with the following exceptions:
+- It has no unique id
+
+See *Widget* for more information.
+
+###Widget- and Page- Components
+In neutron, everything visual gets rendered through react-components. So, for every Widget and Page you need to define a path to a react-component, that renders this widget/page.
+
+When a Page or Widget gets rendered, there are always two properties passed to them:
+- page: an object holding static information about neutron & the current page
+    - edit: A boolean that indicates if the page is in edit mode. If it is, you should also render controls for editing in your component, and hide them if it's set to false, so that it looks like normal.
+- data: the data of the current page or widget. This data gets loaded from the Page's or Widget's `load`-function, and is by default an empty object, if that function is not defined. You can modify the content of this data-object, and when the user hits the page's "Save"-Button, this data-object gets sent to the Page's or Widget's `save` function. If you do it right, `load` will return the exact same data that was passed to `save`, the next time you load the page.
 
 license
 -------

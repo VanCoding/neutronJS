@@ -61,15 +61,12 @@ main.
             delete this.editor;
         }
     }
-
-    exports.save = function(cb){
-        cb({
-            type:"Text",
-            html:this.props.data.html
-        });
-    }
+    
     exports.statics = {
-        getInitialData: function(){
-            return {type:"text",html:"Put some <b>text</b> here"}
+        getDefaultData:function(){
+            return {
+                type:"text",
+                html:"Put some <b>text</b> here"
+            }
         }
     }

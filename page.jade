@@ -10,7 +10,7 @@ html
                 = " "+(this.props.page.data.edit?"Save":"Edit")
         block body
         script(src=this.props.page.neutronPath+"public/main.js")
-        script= "require('main')(location.pathname,"+JSON.stringify(this.props.page.data)+");"
+        script= "require('main')("+JSON.stringify(this.props.page)+");"
 main.
     exports.editOrSave = function(){
         var self = this;
