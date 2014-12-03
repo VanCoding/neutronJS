@@ -1,0 +1,31 @@
+.neutron-list        
+    h2 Blog
+    .btn-toolbar
+        .searchgroup
+            input.form-control.searchbox(type="text")
+            button.btn.btn-primary Search
+        button.btn.btn-primary Filter
+        button.btn.btn-primary Add
+    table.table.table-striped
+        thead
+            tr
+                th Titel
+                th Datum
+                th Autor
+                th(style="text-align:right")
+                    DropdownButton(bsSize="small" title=Glyphicon({glyph:"plus-sign"}))
+                        each id in ["A","B","C"]
+                            MenuItem(eventKey=id onSelect=this.add(id) href="javascript:")= id
+        tbody
+            each item in [1,2,3,4,5]
+                tr
+                    td Test
+                    td Test
+                    td Test
+                    td
+main.
+    var Glyphicon = require("react-bootstrap/Glyphicon");
+    var MenuItem = require("react-bootstrap/MenuItem");
+    var DropdownButton = require("react-bootstrap/DropdownButton");
+    
+    exports.add = function(){}

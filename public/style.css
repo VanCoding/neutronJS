@@ -86,3 +86,27 @@
 .neutron-area-buttons > .open{
     z-index:2;
 }
+
+/* ADMIN */
+
+/* LIST */
+
+
+.neutron-list .btn-toolbar{
+    display:flex;
+}
+.neutron-list .btn-toolbar > *{
+}
+.neutron-list .searchgroup{
+    flex:1;
+    display:flex;
+}
+.neutron-list .searchgroup button{
+    border-top-left-radius:0;
+    border-bottom-left-radius:0;
+}
+.neutron-list .searchbox{
+    flex:1;
+    border-top-right-radius:0px;
+    border-bottom-right-radius:0px;
+}

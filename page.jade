@@ -1,33 +1,12 @@
-doctype html
 html
     head
-        link(rel="stylesheet" type="text/css" href=this.props.page.neutronPath+"public/style.css")
+        link(rel="stylesheet" type="text/css" href=this.props.neutronPath+"public/style.css")
         block head
     body
-        if this.props.page.data.mayEdit
-            button.btn.btn-primary.pull-right.neutron-edit(onClick=this.editOrSave.bind(this))
+        if this.props.mayEdit
+            button.btn.btn-primary.pull-right.neutron-edit(onClick=this.props.toggleEdit)
                 i.glyphicon.glyphicon-pencil
-                = " "+(this.props.page.data.edit?"Save":"Edit")
+                = " "+(this.props.edit?"Save":"Edit")
         block body
-        script(src=this.props.page.neutronPath+"public/main.js")
-        script= "require('main')("+JSON.stringify(this.props.page)+");"
-main.
-    exports.editOrSave = function(){
-        var self = this;
-        if(this.props.page.data.edit){
-            this.props.page.data.edit = false;
-            var req = new XMLHttpRequest();
-            req.open("POST",location.href);
-            req.setRequestHeader("Content-Type","application/json");
-            req.onreadystatechange = function(){
-                if(req.readyState == 4){
-                    self.forceUpdate();
-                }
-            }
-            req.send(JSON.stringify(this.props.page.data));
-        }else{
-            this.props.page.data.edit = true;
-            this.forceUpdate();
-        }
-        
-    }
+        script(src=this.props.neutronPath+"public/main.js")
+        script= "require('main')("+JSON.stringify(this.props)+");"

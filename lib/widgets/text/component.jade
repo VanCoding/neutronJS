@@ -3,7 +3,7 @@
     script(src="http://cdn.ckeditor.com/4.4.5/full/adapters/jquery.js")
     script.
         CKEDITOR.disableAutoInline = true;
-    .websitify-text-component-content(ref="main",contentEditable=this.props.page.data.edit?true:false,dangerouslySetInnerHTML={__html:this.props.data.html})
+    .websitify-text-component-content(ref="main",contentEditable=this.props.edit?true:false,dangerouslySetInnerHTML={__html:this.props.data.html})
 main.
 
     exports.componentDidMount = function(){
@@ -11,7 +11,7 @@ main.
     }
 
     exports.componentDidUpdate = function(){
-        if(this.props.page.data.edit){
+        if(this.props.edit){
             this.startEdit();
         }else{
             this.stopEdit();

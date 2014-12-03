@@ -2,10 +2,10 @@
     each id,i in [null].concat(this.props.data.order)
         if id!=null
             Widget(data=this.props.data.widgets[id])
-        if this.props.page.data.edit
+        if this.props.edit
             .neutron-area-buttons
                 DropdownButton(bsSize="xsmall",title=Glyphicon({glyph:"plus-sign"}))
-                    each widget,id in this.props.page.widgets
+                    each widget,id in this.props.widgets
                         MenuItem(eventKey=id onSelect=this.add(i,id) href="javascript:")= id
                 if i>0
                     Button(bsSize="xsmall" onClick=this.remove(i-1))
@@ -21,7 +21,7 @@ main.
         var self = this;
         return function(){
             var id = "widget"+new Date().getTime();
-            self.props.data.widgets[id] = require(self.props.page.widgets[widgetid]).getDefaultData();
+            self.props.data.widgets[id] = require(self.props.widgets[widgetid]).getDefaultData();
             self.props.data.order.splice(pos,0,id)
             self.forceUpdate();
         }

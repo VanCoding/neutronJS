@@ -1,17 +1,27 @@
-extends ../../page.jade
-
-append head
-    link(rel="stylesheet" href="/public/css/bootstrap.css")
-
-append body
-    .container
-        h3 Admin Panel
-        ul.nav.nav-tabs.pull-right(style="position:relative;top:-50px;")
-            each module,id in this.props.modules
-                li(className=(id == this.state.activeModule?"active":""))
-                    a(href="#")= id
-        = this.props.modules[this.state.activeModule]()
+doctype html
+html
+    head
+        link(rel="stylesheet" type="text/css" href="./public/style.css")
+        link(rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
+    body
+        .container
+            h3 Admin Panel
+            ul.nav.nav-tabs.pull-right(style="position:relative;top:-50px;")
+                each module,id in this.props.modules
+                    li(className=(id == this.state.activeModule?"active":""))
+                        a(href="#" onClick=this.showModule(id))= id
+            = require(this.props.modules[this.state.activeModule])()
+        script(src="./public/admin.js")
+        script= "require('main')("+JSON.stringify(this.props)+");"
 main.
     exports.getInitialState = function(){
+        console.log(this.props);
         return {activeModule:Object.keys(this.props.modules)[0]}
+    }
+    exports.showModule = function(id){
+        var self = this;
+        return function(){
+            self.state.activeModule = id;
+            self.forceUpdate();
+        }
     }
