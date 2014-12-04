@@ -1,0 +1,7 @@
+input.form-control(type="text" ref="input" value=this.props.value onChange=this.onChange)
+main.
+    exports.onChange = function(e){
+        this.props.value = e.target.value;
+        this.forceUpdate();
+        this.props.onChange();
+    }

@@ -1,0 +1,7 @@
+span= this.format()
+
+main.
+    var moment = require("moment");
+    exports.format = function(){
+        return moment(this.props.value).format("DD.MM.YYYY")
+    }

@@ -11,6 +11,7 @@
     "browserify": "~5.12.1",
     "express": "~4.9.7",
     "gridfs-stream": "~0.5.1",
+    "moment": "^2.8.4",
     "mongodb": "~1.4.19",
     "path-to-regexp": "^1.0.1"
   },
