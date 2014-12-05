@@ -1,5 +1,4 @@
 .neutron-list
-    - console.log(this.props)
     h2= this.props.label||this.props.id
     if this.state.item
         .form-horizontal
@@ -7,7 +6,8 @@
                 .form-group
                     label.col-sm-2= name
                     .col-sm-10
-                        = require(this.props.types[column.type].editComponentPath)({value:this.state.item[name]||column.defaultValue,onChange:this.onItemValueChange(name),ref:"field."+name})
+                        - var Field = require(this.props.types[column.type].editComponentPath);
+                        Field(value=(this.state.item[name]||column.defaultValue) onChange=this.onItemValueChange(name) ref="field."+name column=column)&attributes(this.props)
         .btn-toolbar.pull-right
             button.btn.btn-default(onClick=this.cancel) Cancel
             button.btn.btn-primary(onClick=this.save) Save
@@ -32,13 +32,17 @@
                     each column,i in visibleColumns
                         th
                             = column
+                    th
             tbody
                 each item in this.state.data
-                    tr(onClick=this.edit(item))
+                    tr
                         each column,name in this.props.columns
                             if column.visible
-                                td
+                                td(onClick=this.edit(item))
                                     = require(this.props.types[column.type].viewComponentPath)({value:item[name]})
+                        td
+                            button.btn.btn-default.btn-xs.pull-right(onClick=this.delete(item))
+                                i.glyphicon.glyphicon-trash
 main.
     var Glyphicon = require("react-bootstrap/Glyphicon");
     var MenuItem = require("react-bootstrap/MenuItem");
@@ -86,7 +90,7 @@ main.
         if(this.state.search) query.search = this.state.search;
         
         var req = new XMLHttpRequest()
-        req.open("POST","./"+this.props.id+"/query");
+        req.open("POST","./"+this.props.id+"/list");
         req.setRequestHeader("Content-Type","application/json");
         req.onreadystatechange = function(){
             if(req.readyState == 4){
@@ -103,7 +107,7 @@ main.
     }
     
     exports.edit = function(item){
-        return function(){
+        return function(e){
             this.state.item = item;
             this.forceUpdate();
         }.bind(this);        
@@ -126,9 +130,24 @@ main.
         req.setRequestHeader("Content-Type","application/json");
         req.onreadystatechange = function(){
             if(req.readyState == 4){
-                this.state.data = JSON.parse(req.responseText);
-                this.forceUpdate();
+                delete this.state.item;
+                this.update();
             }
         }.bind(this)
-        req.send(JSON.stringify(query));
+        req.send(JSON.stringify(this.state.item));
+    }
+    
+    exports.delete = function(item){
+        return function(){
+            if(!confirm("Are you sure?")) return;
+            var req = new XMLHttpRequest()
+            req.open("GET","./"+this.props.id+"/delete/"+item._id);
+            req.setRequestHeader("Content-Type","application/json");
+            req.onreadystatechange = function(){
+                if(req.readyState == 4){
+                    this.update();
+                }
+            }.bind(this)
+            req.send();
+        }.bind(this);
     }

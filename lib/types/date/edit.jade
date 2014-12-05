@@ -1,6 +1,11 @@
 input.form-control(type="date" value=moment(this.props.value).format("YYYY-MM-DD") onChange=this.onChange ref="input")
 main.
     var moment = require("moment");
+    exports.getInitialState = function(){
+        if(!this.props.value) this.props.value = new Date().getTime();
+        this.props.onChange();
+        return {};
+    }
     exports.onChange = function(e){
         this.props.value = moment(e.target.value).toDate().getTime();
         this.forceUpdate();

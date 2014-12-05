@@ -1,0 +1,12 @@
+Widget(data=this.props.value edit=true)&attributes(this.props)
+main.
+    var Widget = require("neutronjs/lib/widget.js");
+    exports.getInitialState = function(){
+        console.log("PROPS",this.props);
+        console.log()
+        if(!this.props.value){
+            this.props.value = require(this.props.widgets[this.props.column.widgetType]).getDefaultData();
+            this.props.onChange();
+        }
+        return {};
+    }

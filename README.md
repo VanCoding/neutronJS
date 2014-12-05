@@ -81,6 +81,15 @@ When a Page or Widget gets rendered, there are always two properties passed to t
     - edit: A boolean that indicates if the page is in edit mode. If it is, you should also render controls for editing in your component, and hide them if it's set to false, so that it looks like normal.
 - data: the data of the current page or widget. This data gets loaded from the Page's or Widget's `load`-function, and is by default an empty object, if that function is not defined. You can modify the content of this data-object, and when the user hits the page's "Save"-Button, this data-object gets sent to the Page's or Widget's `save` function. If you do it right, `load` will return the exact same data that was passed to `save`, the next time you load the page.
 
+todo
+----
+- Split website in 3 parts: neutron, router and page
+- Allow pages & adminmodules to add files to require in the init function
+- Make a separate router for every page (like for adminmodules)
+- Change client.js so that it is able to render a page based on properties
+- group page props together: neutron (everything global, neutron related), page (everything related to the page, eg. path, params + props added in the page's init function)
+- let pages add static props to their page element in the init function
+
 license
 -------
 MPLv2, read [LICENSE.md](./LICENSE.md) for more information

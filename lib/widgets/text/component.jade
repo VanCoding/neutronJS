@@ -1,11 +1,8 @@
 .websitify-text-component
-    script(src="http://cdn.ckeditor.com/4.4.5/full/ckeditor.js")
-    script(src="http://cdn.ckeditor.com/4.4.5/full/adapters/jquery.js")
-    script.
-        CKEDITOR.disableAutoInline = true;
     .websitify-text-component-content(ref="main",contentEditable=this.props.edit?true:false,dangerouslySetInnerHTML={__html:this.props.data.html})
 main.
-
+    var CKEDITOR = require("./ckeditor.js");
+    CKEDITOR.disableAutoInline = true;
     exports.componentDidMount = function(){
         this.componentDidUpdate();
     }
