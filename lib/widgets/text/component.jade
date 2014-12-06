@@ -1,8 +1,10 @@
 .websitify-text-component
-    .websitify-text-component-content(ref="main",contentEditable=this.props.edit?true:false,dangerouslySetInnerHTML={__html:this.props.data.html})
+    .websitify-text-component-content(ref="main",contentEditable=this.props.edit?true:false,style="display:inline",dangerouslySetInnerHTML={__html:this.props.data.html})
 main.
     var CKEDITOR = require("./ckeditor.js");
     CKEDITOR.disableAutoInline = true;
+    
+    exports.getInitialState = function(){return{}}
     exports.componentDidMount = function(){
         this.componentDidUpdate();
     }
@@ -14,11 +16,15 @@ main.
             this.stopEdit();
         }
     }
+    
+    exports.componentWillUnmount = function(){
+        if(this.props.editor) this.stopEdit();
+    }
 
     exports.startEdit = function(){
         var self = this;
-        if(!this.editor){
-            this.editor = CKEDITOR.inline(this.refs.main.getDOMNode(),{
+        if(!this.state.editor){
+            this.state.editor = CKEDITOR.inline(this.refs.main.getDOMNode(),{
                 enterMode: CKEDITOR.ENTER_BR,
                 toolbar: [
                     { name: 'basicstyles', groups: [ 'basicstyles' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat' ] },
@@ -46,16 +52,18 @@ main.
                 ]
             });
 
-            this.editor.on("change",function(){
+            this.state.editor.on("change",function(){
                 self.props.data.html = self.refs.main.getDOMNode().innerHTML;
             })
         }
     }
 
     exports.stopEdit = function(){
-        if(this.editor){
-            this.editor.destroy();
-            delete this.editor;
+        if(this.state.editor){
+            var html = this.refs.main.getDOMNode().innerHTML;
+            this.state.editor.destroy();
+            delete this.state.editor;
+            this.refs.main.getDOMNode().innerHTML = this.props.data.html;
         }
     }
     
