@@ -4,7 +4,7 @@
         .form-horizontal
             each column,name in this.props.columns
                 .form-group
-                    label.col-sm-2= name
+                    label.col-sm-2= column.label||name
                     .col-sm-10
                         - var Field = require(this.props.types[column.type].editComponentPath);
                         Field(value=(this.state.item[name]||column.defaultValue) onChange=this.onItemValueChange(name) ref="field."+name column=column)&attributes(this.props)
@@ -24,14 +24,14 @@
                     each column,name in this.props.columns
                         MenuItem(eventKey=name href="javascript:")
                             input(type="checkbox",checked=column.visible onChange=this.toggleColumn(column))
-                            = " "+name
+                            = " "+(column.label||name)
         table.table.table-striped
             thead
                 tr
                     - var visibleColumns = this.getVisibleColumns();
                     each column,i in visibleColumns
                         th
-                            = column
+                            = this.props.columns[column].label||column
                     th
             tbody
                 each item in this.state.data
@@ -108,7 +108,7 @@ main.
     
     exports.edit = function(item){
         return function(e){
-            this.state.item = item;
+            this.state.item = JSON.parse(JSON.stringify(item));
             this.forceUpdate();
         }.bind(this);        
     }
