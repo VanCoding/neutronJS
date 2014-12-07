@@ -1,37 +1,29 @@
 .filemanager
-    Modal
-        .modal-header(style="position:relative")
-            button.close
-                span ×
-            h4 Image Library
-        .modal-header
-            .btn-toolbar
-                button.btn.btn-default(onClick=this.setDirectory) /
-                each item in this.props.tree
-                    button.btn.btn-default(data-directory=item._id, onClick=this.setDirectory)= item.filename
-                button.btn.btn-default.pull-right(onClick=this.confirmDelete) Delete
-                button.btn.btn-default.pull-right(onClick=this.createDirectory) New Directory
-                button.btn.btn-default.pull-right() Upload Files
-        .modal-body(onDragEnter=this.dragenter, onDragOver=this.dragover, onDragLeave=this.dragleave, onDrop=this.drop)
-            each file in this.props.files
-                - __add(this.createItem(file));
-        .modal-footer
-            button.btn.btn-default Cancel
-            button.btn.btn-primary Select
-        if this.props.showDeleteDialog
-            Modal(onClose=)
-                .modal-header(style="position:relative")
-                    button.close(onClick=this.cancelDelete)
-                        span ×
-                    h4 Delete Items
-                .modal-body Do you really want to delete those items?
-                .modal-footer
-                    button.btn.btn-default(onClick=this.cancelDelete) Cancel
-                    button.btn.btn-primary(onClick=this.delete) Delete
+    .modal-header
+        .btn-toolbar
+            button.btn.btn-default(onClick=this.setDirectory)
+                i.glyphicon.glyphicon-home
+            each item in this.props.tree
+                button.btn.btn-default(data-directory=item._id, onClick=this.setDirectory)= item.filename
+            button.btn.btn-default.pull-right(onClick=this.confirmDelete) Delete
+            button.btn.btn-default.pull-right(onClick=this.createDirectory) New Directory
+            button.btn.btn-default.pull-right() Upload Files
+    .modal-body(onDragEnter=this.dragenter, onDragOver=this.dragover, onDragLeave=this.dragleave, onDrop=this.drop)
+        each file in this.props.files
+            - __add(this.createItem(file));
+    if this.props.showDeleteDialog
+        Modal(onClose=)
+            .modal-header(style="position:relative")
+                button.close(onClick=this.cancelDelete)
+                    span ×
+                h4 Delete Items
+            .modal-body Do you really want to delete those items?
+            .modal-footer
+                button.btn.btn-default(onClick=this.cancelDelete) Cancel
+                button.btn.btn-primary(onClick=this.delete) Delete
 
 main.
     var Modal = require("../modal/component.jade");
-
     exports.getInitialState = function(){
         this.props.directory = null;
         this.props.tree = [];
@@ -72,7 +64,7 @@ main.
                         entry.progress = e.total/e.loaded*100+"%";
                         self.forceUpdate();
                     }
-                    req.open("PUT","/files/"+(self.props.directory||"root")+"/"+files[i].name);
+                    req.open("PUT","./"+self.props.id+"/"+(self.props.directory||"root")+"/"+files[i].name);
                     req.setRequestHeader("Content-Type",files[i].type);
                     req.onload = function(){
                         var result = JSON.parse(req.responseText);
@@ -92,6 +84,7 @@ main.
     }
 
     exports.createItem = function(item){
+        var self = this;
         var icons = {
             "text/directory":"fa-folder-o",
             "application/pdf":"fa-file-pdf-o"
@@ -103,12 +96,12 @@ main.
         if(item.selected) attributes.className += " selected";
 
         if(["image/png","image/jpeg"].indexOf(item.contentType) >= 0){
-            attributes.style["background-image"] = "url("+(item._id?("/files/"+item._id):item.data)+")";
+            attributes.style["background-image"] = "url("+(item._id?("./"+this.props.id+"/"+item._id):item.data)+")";
         }else{
             children.push(React.DOM.span({className:"fa "+(icons[item.contentType]||"fa-file-o")}));
         }
 
-        attributes.onClick = this.clickItem(item);
+        attributes.onClick = this.clickItem(item);        
 
         if(item.progress){
             children.push(React.DOM.div({className:"progressbar"},React.DOM.div({className:"progressbarstatus",style:{width:item.progress}})));
@@ -121,27 +114,27 @@ main.
     exports.clickItem = function(file){
         var self = this;
         return function(e){
-            if(file.contentType=="text/directory"){
+        
+            if(file.selected && file.contentType == "text/directory" && file.lastClick+300 > new Date().getTime()){
                 self.props.directory = file._id;
                 self.props.files = null;
                 self.props.tree.push(file);
-                self.forceUpdate();
-            }else{
+            }else{        
                 file.selected = !file.selected;
+                file.lastClick = new Date().getTime();
                 if(!e.nativeEvent.ctrlKey){
                     for(var i = 0; i < self.props.files.length; i++){
                         if(self.props.files[i] == file) continue;
                         delete self.props.files[i].selected;
                     }
                 }
-                self.forceUpdate();
             }
+            self.forceUpdate();
         }
     }
 
     exports.setDirectory = function(e){
         this.props.directory = e.target.getAttribute("data-directory")||null;
-        console.log(this.props.tree);
         for(var i = this.props.tree.length-1; i >= 0 && this.props.tree[i]._id != this.props.directory; i--){
             this.props.tree.splice(i,1);
         }
@@ -153,7 +146,7 @@ main.
         if(!this.props.files && typeof window == "object"){
             var self = this;
             var req = new XMLHttpRequest();
-            req.open("GET","/files/"+(self.props.directory||""));
+            req.open("GET","./"+self.props.id+"/"+(self.props.directory||""));
             req.onload = function(){
                 self.props.files = JSON.parse(req.responseText);
                 self.sortItems();
@@ -172,17 +165,18 @@ main.
     }
 
     exports.cancelDelete = function(){
-        this.props.showDeleteDialog = true;
+        this.props.showDeleteDialog = false;
         this.forceUpdate();
     }
 
     exports.delete = function(){
         var self = this;
+        this.props.showDeleteDialog = false;
         for(var i = 0; i < this.props.files.length; i++){
             var file = this.props.files[i];
             if(file.selected){
                 var req = new XMLHttpRequest();
-                req.open("DELETE","/files/"+file._id);
+                req.open("DELETE","./"+self.props.id+"/"+file._id);
                 req.onload = function(){
                     self.props.files.splice(self.props.files.indexOf(file),1);
                     self.forceUpdate();
@@ -193,7 +187,7 @@ main.
         }
         if(this.props.directory){
             var req = new XMLHttpRequest();
-            req.open("DELETE","/files/"+this.props.directory);
+            req.open("DELETE","./"+this.props.id+"/"+this.props.directory);
             req.onload = function(){
                 self.props.tree.splice(self.props.tree.length-1,1);
                 self.props.files = null;
@@ -219,7 +213,7 @@ main.
     exports.createDirectory = function(){
         var self = this;
         var req = new XMLHttpRequest();
-        req.open("PUT","/files/"+(self.props.directory||"root")+"/Neuer Ordner");
+        req.open("PUT","./"+this.props.id+"/"+(self.props.directory||"root")+"/Neuer Ordner");
         req.setRequestHeader("Content-Type","text/directory");
         req.onload = function(){
             self.props.files.push(JSON.parse(req.responseText));

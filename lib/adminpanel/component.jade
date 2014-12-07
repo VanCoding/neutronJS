@@ -9,7 +9,8 @@ html
             ul.nav.nav-tabs.pull-right(style="position:relative;top:-50px;")
                 each module,id in this.props.modules
                     li(className=(id == this.state.activeModule?"active":""))
-                        a(href="#" onClick=this.showModule(id))= id
+                        a(href="#" onClick=this.showModule(id))= module.label||id
+        .container
             - var Module = require(this.props.modules[this.state.activeModule].componentPath);
             Module&attributes(this.props.modules[this.state.activeModule],this.props.modules[this.state.activeModule].properties,this.props)
         script(src="./public/admin.js")

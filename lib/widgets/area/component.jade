@@ -10,6 +10,9 @@
                 if i>0
                     Button(bsSize="xsmall" onClick=this.remove(i-1))
                         Glyphicon(glyph="trash")
+                if i > 0 && i < this.props.data.order.length
+                    Button(bsSize="xsmall" onClick=this.swap(i-1))
+                        Glyphicon(glyph="resize-vertical")
 main.
     var Button = require("react-bootstrap/Button");
     var DropdownButton = require("react-bootstrap/DropdownButton");
@@ -31,6 +34,14 @@ main.
         return function(){
             delete self.props.data.widgets[self.props.data.order[pos]];
             self.props.data.order.splice(pos,1);
+            self.forceUpdate();
+        }
+    }
+    
+    exports.swap = function(pos){
+        var self = this;
+        return function(){
+            self.props.data.order.splice(pos+1,0,self.props.data.order.splice(pos,1)[0]);
             self.forceUpdate();
         }
     }
