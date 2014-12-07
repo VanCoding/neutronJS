@@ -1,0 +1,38 @@
+.neutron-image-widget
+    if this.props.data.src
+        img(src=this.props.data.src style="width:100%" onClick=this.pickImage)
+    else
+        span(onClick=this.pickImage) Pick Image
+    if this.state.pick
+        Modal
+            FileManager(id="files" mode="pick" contentTypes=["image/png","image/jpeg","image/jpg"] onFilePick=this.onFilePick onCancel=this.onCancel)&attributes(this.props)
+    
+main.
+    var FileManager = require("../../filemanager/component.jade");
+    var Modal = require("../../modal/component.jade");
+    
+    exports.getInitialState = function(){
+        return {};
+    }
+    
+    exports.pickImage = function(){
+        this.state.pick = true;
+        this.forceUpdate();
+    }
+    
+    exports.onCancel = function(){
+        this.state.pick = false;
+        this.forceUpdate();
+    }
+    
+    exports.onFilePick = function(item){
+        this.props.data.src = "/neutron/files/"+item._id;
+        delete this.state.pick;
+        this.forceUpdate();
+    }
+    
+    exports.statics = {
+        getDefaultData:function(){
+            return {type:"image"}
+        }
+    }

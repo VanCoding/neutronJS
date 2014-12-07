@@ -11,8 +11,12 @@
     .modal-body(onDragEnter=this.dragenter, onDragOver=this.dragover, onDragLeave=this.dragleave, onDrop=this.drop)
         each file in this.props.files
             - __add(this.createItem(file));
+    if this.props.mode == "pick"
+        .modal-footer
+            button.btn.btn-default(onClick=this.cancelFilePick) Cancel
+            button.btn.btn-primary(onClick=this.finishFilePick className=this.props.getSelectedItem()?"":"disabled") OK
     if this.props.showDeleteDialog
-        Modal(onClose=)
+        Modal
             .modal-header(style="position:relative")
                 button.close(onClick=this.cancelDelete)
                     span ×
@@ -64,7 +68,7 @@ main.
                         entry.progress = e.total/e.loaded*100+"%";
                         self.forceUpdate();
                     }
-                    req.open("PUT","./"+self.props.id+"/"+(self.props.directory||"root")+"/"+files[i].name);
+                    req.open("PUT",self.props.neutronPath+self.props.id+"/"+(self.props.directory||"root")+"/"+files[i].name);
                     req.setRequestHeader("Content-Type",files[i].type);
                     req.onload = function(){
                         var result = JSON.parse(req.responseText);
@@ -96,7 +100,7 @@ main.
         if(item.selected) attributes.className += " selected";
 
         if(["image/png","image/jpeg"].indexOf(item.contentType) >= 0){
-            attributes.style["background-image"] = "url("+(item._id?("./"+this.props.id+"/"+item._id):item.data)+")";
+            attributes.style["background-image"] = "url("+(item._id?(this.props.neutronPath+this.props.id+"/"+item._id):item.data)+")";
         }else{
             children.push(React.DOM.span({className:"fa "+(icons[item.contentType]||"fa-file-o")}));
         }
@@ -146,7 +150,7 @@ main.
         if(!this.props.files && typeof window == "object"){
             var self = this;
             var req = new XMLHttpRequest();
-            req.open("GET","./"+self.props.id+"/"+(self.props.directory||""));
+            req.open("GET",this.props.neutronPath+self.props.id+"/"+(self.props.directory||""));
             req.onload = function(){
                 self.props.files = JSON.parse(req.responseText);
                 self.sortItems();
@@ -176,7 +180,7 @@ main.
             var file = this.props.files[i];
             if(file.selected){
                 var req = new XMLHttpRequest();
-                req.open("DELETE","./"+self.props.id+"/"+file._id);
+                req.open("DELETE",this.props.neutronPath+self.props.id+"/"+file._id);
                 req.onload = function(){
                     self.props.files.splice(self.props.files.indexOf(file),1);
                     self.forceUpdate();
@@ -187,7 +191,7 @@ main.
         }
         if(this.props.directory){
             var req = new XMLHttpRequest();
-            req.open("DELETE","./"+this.props.id+"/"+this.props.directory);
+            req.open("DELETE",this.props.neutronPath+this.props.id+"/"+this.props.directory);
             req.onload = function(){
                 self.props.tree.splice(self.props.tree.length-1,1);
                 self.props.files = null;
@@ -213,7 +217,7 @@ main.
     exports.createDirectory = function(){
         var self = this;
         var req = new XMLHttpRequest();
-        req.open("PUT","./"+this.props.id+"/"+(self.props.directory||"root")+"/Neuer Ordner");
+        req.open("PUT",this.props.neutronPath+this.props.id+"/"+(self.props.directory||"root")+"/Neuer Ordner");
         req.setRequestHeader("Content-Type","text/directory");
         req.onload = function(){
             self.props.files.push(JSON.parse(req.responseText));
@@ -225,4 +229,18 @@ main.
 
     exports.displayShadow = function(){
         return true;
+    }
+    
+    exports.getSelectedItem = function(){
+        for(var i = 0; i < this.props.files.length; i++){
+            if(this.props.files[i].selected) return this.props.files[i];
+        }
+    }
+    
+    exports.finishFilePick = function(){
+        var item = this.getSelectedItem();
+        if(item) this.props.onFilePick(item);
+    }
+    exports.cancelFilePick = function(){
+        this.props.onCancel();
     }
