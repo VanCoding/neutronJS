@@ -4,13 +4,11 @@ A react.js-based CMS for node.js
 
 features
 --------
-- client & serverside rendering & routing of fullpage react-components
-- writing pages & components completely in jade (using jade2react)
+- client & serverside rendering & routing of fullpage components (using react.js)
+- widget system for inline editing of pages (inspired by apostrophe2)
+- auto-generated & easily extendable admin interface (inspired by keystoneJS)
+- writing pages, widgets & adminmodules completely in jade (using jade2react)
 - auto-bundling clientside code (using browserify)
-- inline editing of pages(planned)
-- component system for inline editing, similar to apostrophe2 (planned)
-- auto-generated & easily extendable admin interface (planned)
-- page hierarchy organizer (planned)
 
 project state
 -------------
